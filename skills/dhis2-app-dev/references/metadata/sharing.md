@@ -113,7 +113,7 @@ for the same type would have the data bits silently stripped to `rw------`.
 |----------|-------|
 | `DEFAULT` | `--------` |
 | `READ` | `r-------` |
-| `WRITE` | `-w------` | Metadata write only |
+| `WRITE` | `-w------` (metadata write only) |
 | `READ_WRITE` | `rw------` |
 | `DATA_READ` | `--r-----` |
 | `DATA_WRITE` | `---w----` |
