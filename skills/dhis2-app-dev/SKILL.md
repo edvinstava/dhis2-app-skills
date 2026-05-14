@@ -49,6 +49,11 @@ the API shape before building the UI.
 | Build a dashboard or detail page with widgets | `references/data-fetching.md` → `references/ui-patterns/widget.md` → `references/ui-patterns/dashboards.md` |
 | Build or style any UI component | `references/ui-patterns.md` |
 | Handle API differences across DHIS2 versions | `references/data-fetching.md` (§ Feature flags) |
+| Understand the DHIS2 metadata model (types, identifiers, sharing) | `references/metadata.md` |
+| Search, list, or filter metadata (any type) | `references/metadata.md` → `references/metadata/querying.md` |
+| Discover the shape of a metadata type at runtime | `references/metadata/schemas.md` |
+| Build a UI to create/edit a specific metadata type | `references/data-fetching.md` → `references/metadata/common-types.md` → `references/ui-patterns.md` |
+| Set or change sharing on metadata | `references/metadata/sharing.md` |
 
 ## Rules
 
@@ -59,6 +64,7 @@ These apply to all DHIS2 work, regardless of which references you read:
 - **Always clone and read source code** before writing data-fetching or UI code. Your training data is unreliable for DHIS2 APIs and component props — the source is the contract.
 - **Use `i18n.t()` from `@dhis2/d2-i18n`** for all user-facing strings.
 - **Use displayName instead of name** for all dhis2 resources (organisation units, data elements, etc.).
+- **Metadata correctness.** Treat UIDs as opaque 11-char IDs (`/^[A-Za-z][A-Za-z0-9]{10}$/`). Never invent metadata properties or query parameters — verify with `/api/schemas/<type>` (see `references/metadata/schemas.md`) or the controller source via opensrc before composing a query or payload.
 - **CSS Modules + DHIS2 design tokens** for styling (`var(--spacers-dp16)`, `var(--colors-grey900)`, etc.).
 - **Verify after each turn.** Run `pnpm exec eslint` and `pnpm exec tsc --noEmit` after making changes to catch errors early. Fix any issues before moving on. No output means no errors.
 
