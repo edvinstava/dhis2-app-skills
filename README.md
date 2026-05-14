@@ -5,7 +5,7 @@ Agent skills for building [DHIS2](https://dhis2.org) custom applications. These 
 ## Install
 
 ```bash
-npx skills add devotta-labs/dhis2-app-skills
+npx skills add edvinstava/dhis2-app-skills
 ```
 
 ## Included skills
