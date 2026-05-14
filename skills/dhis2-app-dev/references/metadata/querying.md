@@ -64,14 +64,14 @@ computes them at query time. All five are verified against the 2.42 play instanc
 
 | Preset | What it returns |
 |--------|-----------------|
-| `:identifiable` | `id`, `code`, `name`, `created`, `lastUpdated` — the minimum to identify an object |
-| `:nameable` | `:identifiable` fields plus `shortName` |
+| `:identifiable` | `id`, `code`, `name`, `created`, `lastUpdated`, `lastUpdatedBy` — the minimum to identify an object |
+| `:nameable` | `id`, `code`, `name`, `shortName`, `description`, `created`, `lastUpdated`. Note: not a superset of `:identifiable` — drops `lastUpdatedBy`. |
 | `:simple` | Non-relational scalar fields plus display fields: `id`, `code`, `name`, `shortName`, `displayName`, `displayShortName`, `displayFormName`, `created`, `lastUpdated`, `aggregationType`, `valueType`, `domainType`, etc. (varies by type) |
-| `:owner` | All persisted writable fields — `id`, `code`, `name`, `shortName`, `sharing`, `translations`, `createdBy`, `categoryCombo`, and every other writable scalar or reference. Use for create/update payloads. |
+| `:owner` | Properties flagged as `owner: true` in the schema — typically the canonical writable surface for create/update payloads. To know exactly which fields, check `/api/schemas/<type>` (see schemas.md). |
 | `:all` | Every field including computed and non-persisted (`access`, `favorites`, `href`, `favorite`). Much larger response than `:owner`. Rarely needed in production. |
 
 Example — `:identifiable` on data elements returns `id`, `code`, `name`, `created`,
-`lastUpdated` (no `displayName`):
+`lastUpdated`, `lastUpdatedBy` (no `displayName`):
 
 ```
 GET /api/dataElements.json?fields=:identifiable&pageSize=2
@@ -127,7 +127,7 @@ Response excerpt:
 GET /api/dataElements.json?fields=:identifiable,!code&pageSize=2
 ```
 
-Returns `id`, `name`, `created`, `lastUpdated` — `code` is absent.
+Returns `id`, `name`, `created`, `lastUpdated`, `lastUpdatedBy` — `code` is absent.
 
 **Nested collection pagination via field transform is not available in 2.42.** A
 `~paging(page,pageSize)` transform syntax appears in some older DHIS2 documentation,
@@ -340,16 +340,14 @@ scenarios where you genuinely need the full list.
 
 ### `totalPages=true`
 
-By default the `pager` includes `total` and `pageCount`. If you observe a case where
-`total` is missing (some endpoints omit it for performance), add `totalPages=true`:
+On standard per-type metadata endpoints (`/api/dataElements`, `/api/programs`, etc.) the
+`pager` always includes `total` and `pageCount` — no extra parameter is needed. Verified
+against 2.42: `?pageSize=2&fields=id` and `?pageSize=2&fields=id&totalPages=true` return
+an identical pager.
 
-```
-GET /api/dataElements.json?paging=true&totalPages=true&pageSize=2&fields=id
-```
-
-This forces a `COUNT(*)` query on the server. On large tables (hundreds of thousands of
-objects) this adds latency. Only use it when the UI needs to display a page count or
-total number of results.
+The `totalPages=true` parameter has no visible effect on these endpoints. Its main
+relevance is documented in the Gist section: the gist API omits `total` by default, and
+the guidance for that case is to use the regular endpoint instead.
 
 ---
 
