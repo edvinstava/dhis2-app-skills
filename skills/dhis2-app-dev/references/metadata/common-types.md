@@ -125,8 +125,8 @@ const payload = {
     name: 'ANC 1-3 Dropout Rate',
     shortName: 'ANC Dropout Rate',
     indicatorType: { id: '<indicator-type-uid>' },
-    numerator: '#{fbfJHSPpUQD.pq2XI5kz2BY}',
-    denominator: '#{fbfJHSPpUQD.pq2XI5kz2BY}',
+    numerator: '#{<anc1-de-uid>} - #{<anc3-de-uid>}',  // ANC1 minus ANC3
+    denominator: '#{<anc1-de-uid>}',                   // ANC1 as base
     annualized: false,
 };
 
@@ -163,8 +163,12 @@ programs (`programType: 'WITHOUT_REGISTRATION'`) no `trackedEntityType` is neede
 - `programTrackedEntityAttributes` links existing tracked entity attributes to this
   program. The TEAs themselves are global objects (`/api/trackedEntityAttributes`) — they
   are not created here, only referenced.
-- Per-program uniqueness for a TEA is set on the `programTrackedEntityAttribute` link
-  object (`unique: true`), not on the TEA itself.
+- Per-program uniqueness via a simple flag on the `programTrackedEntityAttribute` link
+  object is **not** how 2.42 models this — there is no `unique` field on
+  `ProgramTrackedEntityAttribute`. The `unique: true` field on `TrackedEntityAttribute`
+  itself enforces global uniqueness across all tracked entity instances. For any
+  program-scoped uniqueness behaviour, check `/api/schemas/programTrackedEntityAttribute`
+  and the source directly.
 - `organisationUnits` controls which facilities can use the program — typically populated
   after creating the program.
 
@@ -224,8 +228,9 @@ const createTrackerProgramMutation = {
   inside a TET. `trackedEntityTypeAttributes` on a TET is an association list linking the
   TET to existing TEAs.
 - The `trackedEntityTypeAttribute` association object (no standalone endpoint — it is an
-  embedded object) contains: `trackedEntityAttribute: { id }`, `displayName`, `mandatory`,
-  `searchable`. Set `searchable: true` on the attributes you want indexed for search.
+  embedded object) contains: `trackedEntityAttribute: { id }`, `displayInList` (show on
+  enrollment form), `mandatory`, `searchable`. Set `searchable: true` on the attributes
+  you want indexed for search.
 - TEAs used for cross-TET search (e.g. a national ID shared across programs) should be
   created once globally and linked to multiple TETs.
 
@@ -257,9 +262,9 @@ attributes)
 **Common gotchas:**
 - `aggregationType` is required (schema `required: true`). Use `NONE` for non-aggregate
   attributes (the common case for tracker).
-- `unique: true` makes the attribute globally unique across all tracked entities of any
-  type. For per-program uniqueness, set `unique: true` on the `programTrackedEntityAttribute`
-  link instead, not here.
+- `unique: true` makes the attribute globally unique across all tracked entity instances.
+  There is no `unique` flag on `programTrackedEntityAttribute` in 2.42 — per-program
+  uniqueness cannot be set via that link object.
 - `generated: true` enables server-side pattern-based ID generation using `pattern`. When
   `generated` is `true` the attribute value is auto-assigned and read-only.
 
