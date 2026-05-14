@@ -19,8 +19,8 @@ Every shareable object carries these fields:
 |-------|------|---------|
 | `publicAccess` | 8-char string | Access granted to all authenticated users |
 | `externalAccess` | boolean | Whether anonymous (unauthenticated) access is allowed |
-| `userAccesses` | array | Per-user grants: `{ id, displayName, access }` |
-| `userGroupAccesses` | array | Per-group grants: `{ id, displayName, access }` |
+| `userAccesses` | array | Per-user grants: `{ id, name, displayName, access }` |
+| `userGroupAccesses` | array | Per-group grants: `{ id, name, displayName, access }` |
 | `createdBy` / `user` | reference | Owner — the user who created the object (`user` is an alias derived from `createdBy`) |
 
 ### Two sharing shapes in the API
@@ -81,17 +81,21 @@ Validation rule from `AccessStringHelper.java` (confirmed in 2.42 source):
 ```
 length must be exactly 8
 string must end with "----"
-position 0: 'r' or '-'
-position 1: 'w' or '-'
-position 2: 'r' or '-'
-position 3: 'w' or '-'
+byte[0]: 'r' or '-'   (position 1 in the table above — metadata read)
+byte[1]: 'w' or '-'   (position 2 — metadata write)
+byte[2]: 'r' or '-'   (position 3 — data read)
+byte[3]: 'w' or '-'   (position 4 — data write)
 ```
 
+Note: byte indices are 0-based; positions 1–4 in the table above correspond to byte
+indices 0–3.
+
 The JavaDoc comment at the top of `AccessStringHelper.java` says "only the two first
-positions are used". That comment is outdated — positions 2–3 (`DATA_READ`/`DATA_WRITE`)
+positions are used". That comment is outdated — positions 3–4 (`DATA_READ`/`DATA_WRITE`)
 are actively enforced for `dataShareable` types. For non-`dataShareable` types (e.g.
 `dataElement`, `indicator`, `dashboard`), the server silently strips data-sharing bits
-on write — safe to send `rw------` but not `rw------` with data bits set on those types.
+on write — safe to send `rw------` to a non-`dataShareable` type; sending `rwrw----`
+for the same type would have the data bits silently stripped to `rw------`.
 
 **Common combinations:**
 
@@ -160,19 +164,17 @@ Response (confirmed against live 2.42 play instance):
 - `meta.allowPublicAccess` — whether the current user may change `publicAccess` on this object.
 - `meta.allowExternalAccess` — whether the current user may toggle `externalAccess`.
 - `object.user` — the owner (derived from `createdBy`); read-only here.
-- `object.userGroupAccesses` items have shape `{ id, displayName, access }`.
-- `object.userAccesses` items have shape `{ id, displayName, access }`.
+- `object.userGroupAccesses` items have shape `{ id, name, displayName, access }` — prefer `displayName` for display; `name` is also present but carries the same value.
+- `object.userAccesses` items have shape `{ id, name, displayName, access }` — same note applies.
 
 ---
 
 ## Writing sharing
 
-The endpoint accepts both `POST` and `PUT`. Both methods are handled identically —
-`SharingController.java` maps `@PutMapping` to the same handler as `@PostMapping`. Use
-`POST`; the `useDataEngine` mutation type that maps to POST is `'create'`, but because
-this endpoint uses query-string identification (`?type=...&id=...`) rather than a path
-parameter, the practical choice is the `type: 'update' as const` pattern which the
-app-runtime resolves to PUT. Either method is accepted.
+The controller accepts both `POST` and `PUT` — `@PutMapping` in `SharingController.java`
+delegates to the same `postSharing` handler. All patterns below use `type: 'update' as const`,
+which `@dhis2/app-runtime` sends as PUT. That works because the endpoint identifies the
+target via `params: { type, id }` rather than a path-segment id.
 
 **Request shape:**
 
@@ -309,6 +311,8 @@ await dataEngine.mutate(removeAllAccesses);
 
 Fetch the source object's sharing, then write it to the target. Use the `/api/sharing`
 GET response shape directly as the POST body — it is already in `{ object: { ... } }` form.
+The `user` (owner) field in the copied object is ignored by the controller — ownership is
+read from the target record, not from the request body.
 
 ```typescript
 const copySharingFromSource = async (
