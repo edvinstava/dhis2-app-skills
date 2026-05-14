@@ -129,6 +129,13 @@ GET /api/dataElements.json?fields=:identifiable,!code&pageSize=2
 
 Returns `id`, `name`, `created`, `lastUpdated` — `code` is absent.
 
+**Nested collection pagination via field transform is not available in 2.42.** A
+`~paging(page,pageSize)` transform syntax appears in some older DHIS2 documentation,
+but the transform is not implemented in 2.42 — the server returns a 500 Internal Server
+Error when the syntax is used (verified against `stable-2-42-4-1`). To page a nested
+collection, use the gist collection navigation endpoint
+(`/api/<type>/<uid>/<collection>/gist`) instead.
+
 ---
 
 ## Filtering (`filter`)
