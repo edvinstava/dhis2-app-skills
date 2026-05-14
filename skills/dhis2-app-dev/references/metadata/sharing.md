@@ -98,7 +98,7 @@ on write — safe to send `rw------` but not `rw------` with data bits set on th
 | String | Meaning |
 |--------|---------|
 | `rwrw----` | Full metadata + data access |
-| `rwr-----` | Read metadata + read data |
+| `rwr-----` | Metadata read/write + data read |
 | `rw------` | Edit metadata; no data access (or type is not `dataShareable`) |
 | `r-------` | Read metadata only |
 | `--------` | No access |
@@ -109,6 +109,7 @@ on write — safe to send `rw------` but not `rw------` with data bits set on th
 |----------|-------|
 | `DEFAULT` | `--------` |
 | `READ` | `r-------` |
+| `WRITE` | `-w------` | Metadata write only |
 | `READ_WRITE` | `rw------` |
 | `DATA_READ` | `--r-----` |
 | `DATA_WRITE` | `---w----` |
