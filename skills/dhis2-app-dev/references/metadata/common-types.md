@@ -23,7 +23,7 @@ requires special authority). There are no other reference prerequisites.
   or update payload.
 - `organisationUnit` is `shareable: false` in the schema (verified on 2.42) — there is no
   `/api/sharing` endpoint for org units. Access control is via the org-unit hierarchy assigned
-  to users, not object-level sharing.
+  to users, not object-level sharing (see [./sharing.md](./sharing.md) for the sharing model).
 - `geometry` uses GeoJSON. Pass a standard GeoJSON `Point`, `Polygon`, or `MultiPolygon`
   object as the field value — the server stores it in the `geometry` column.
 - `openingDate` is required. Use ISO 8601 date string (e.g. `"2024-01-01T00:00:00.000"`).

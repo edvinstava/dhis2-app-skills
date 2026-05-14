@@ -52,7 +52,7 @@ the API shape before building the UI.
 | Understand the DHIS2 metadata model (types, identifiers, sharing) | `references/metadata.md` |
 | Search, list, or filter metadata (any type) | `references/metadata.md` → `references/metadata/querying.md` |
 | Discover the shape of a metadata type at runtime | `references/metadata/schemas.md` |
-| Build a UI to create/edit a specific metadata type | `references/data-fetching.md` → `references/metadata/common-types.md` |
+| Build a UI to create/edit a specific metadata type | `references/data-fetching.md` → `references/metadata/common-types.md` → `references/ui-patterns.md` |
 | Set or change sharing on metadata | `references/metadata/sharing.md` |
 
 ## Rules

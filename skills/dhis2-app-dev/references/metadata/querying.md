@@ -67,7 +67,7 @@ computes them at query time. All five are verified against the 2.42 play instanc
 | `:identifiable` | `id`, `code`, `name`, `created`, `lastUpdated`, `lastUpdatedBy` — the minimum to identify an object |
 | `:nameable` | `id`, `code`, `name`, `shortName`, `description`, `created`, `lastUpdated`. Note: not a superset of `:identifiable` — drops `lastUpdatedBy`. |
 | `:simple` | Non-relational scalar fields plus display fields: `id`, `code`, `name`, `shortName`, `displayName`, `displayShortName`, `displayFormName`, `created`, `lastUpdated`, `aggregationType`, `valueType`, `domainType`, etc. (varies by type) |
-| `:owner` | Properties flagged as `owner: true` in the schema — typically the canonical writable surface for create/update payloads. To know exactly which fields, check `/api/schemas/<type>` (see schemas.md). |
+| `:owner` | Properties flagged as `owner: true` in the schema — typically the canonical writable surface for create/update payloads. To know exactly which fields, check `/api/schemas/<type>` (see [schemas.md](./schemas.md)). |
 | `:all` | Every field including computed and non-persisted (`access`, `favorites`, `href`, `favorite`). Much larger response than `:owner`. Rarely needed in production. |
 
 Example — `:identifiable` on data elements returns `id`, `code`, `name`, `created`,

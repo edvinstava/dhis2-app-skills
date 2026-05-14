@@ -93,10 +93,10 @@ the Out of scope section below.
 
 | Task | Read |
 |------|------|
-| Build a query, filter, or list view | `metadata/querying.md` |
-| Discover the shape of a type at runtime | `metadata/schemas.md` |
-| Create or edit a specific metadata type | `metadata/common-types.md` |
-| Set or change sharing | `metadata/sharing.md` |
+| Build a query, filter, or list view | [`metadata/querying.md`](./metadata/querying.md) |
+| Discover the shape of a type at runtime | [`metadata/schemas.md`](./metadata/schemas.md) |
+| Create or edit a specific metadata type | [`metadata/common-types.md`](./metadata/common-types.md) |
+| Set or change sharing | [`metadata/sharing.md`](./metadata/sharing.md) |
 
 ---
 
