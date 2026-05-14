@@ -89,7 +89,7 @@ When asked to query or mutate an unfamiliar metadata type, start here:
      tells you whether items are references (`"REFERENCE"`) or scalar. For
      reference collections, each item is `{"id": "<uid>"}`.
    - **Embedded objects:** `embeddedObject: true` — these are inlined sub-documents
-     (e.g. `sharing`, `style`, `access`), not standalone references.
+     (e.g. `style`, `access`, `dataSetElements`), not standalone references.
    - **Computed fields:** `persisted: false` — server-generated; never send these
      in a create/update payload (e.g. `displayName`, `href`, `access`).
    - **Enumeration fields:** `propertyType: "CONSTANT"` — the schema includes a
@@ -97,7 +97,9 @@ When asked to query or mutate an unfamiliar metadata type, start here:
 
 3. **Build the query or payload** from what you learned.
 
-   For queries: only fields with `readable: true` can appear in a `fields` parameter.
+   For queries: any property listed in the schema can appear in `fields`. Non-persisted
+   properties (`displayName`, `href`, computed flags like `access`) are computed at
+   serialization time but still selectable.
    For create/update payloads: only include fields with `writable: true`.
 
 ---
