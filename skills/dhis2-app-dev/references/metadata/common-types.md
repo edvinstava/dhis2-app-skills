@@ -197,6 +197,12 @@ const trackerPayload = {
     skipOffline: false,
     trackedEntityType: { id: '<tracked-entity-type-uid>' },
 };
+
+const createTrackerProgramMutation = {
+    resource: 'programs',
+    type: 'create' as const,
+    data: trackerPayload,
+};
 ```
 
 ---
