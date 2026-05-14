@@ -19,8 +19,8 @@ program stages for event/tracker capture). Both use category combos to express
 disaggregation dimensions; category combos are built from categories, which in turn hold
 category options. When a data element restricts its allowed values to a finite list, it
 references an option set. Indicators compute derived values by referencing data elements
-in numerator/denominator expressions. Programs are either `EVENT` (single-event, no
-enrollment) or `WITH_REGISTRATION` (tracker, with enrollment). Both own program stages,
+in numerator/denominator expressions. Programs are either `WITHOUT_REGISTRATION` (event programs, single-event, no enrollment) or
+`WITH_REGISTRATION` (tracker, with enrollment). Both own program stages,
 which own program stage data elements. Tracker programs additionally link a tracked entity
 type and tracked entity attributes via program tracked entity attributes. Data sets group
 data elements for aggregate data entry.
@@ -45,7 +45,7 @@ Relationship summary:
 ## Identifiers
 
 DHIS2 metadata objects are addressed by **UID** — an opaque 11-character identifier
-matching `/^[a-zA-Z][a-zA-Z0-9]{10}$/`. Generated server-side; treat as opaque.
+matching `/^[A-Za-z][A-Za-z0-9]{10}$/`. Generated server-side; treat as opaque.
 
 Confirmed in `CodeGenerator.java`:
 ```
@@ -62,7 +62,8 @@ Each object also carries:
   prefer `displayName` in UIs** — `name` shows the wrong language to non-default users.
 - `displayShortName` — same, for `shortName`.
 - `translations` — array of `{ locale, property, value }` triples driving `displayName` /
-  `displayShortName`.
+  `displayShortName`. The `property` value uses screaming snake case: `"NAME"`,
+  `"SHORT_NAME"`, `"DESCRIPTION"`, etc.
 - `href` — server-rendered absolute URL to the object's endpoint.
 
 `displayName` resolution: `BaseIdentifiableObject.getDisplayName()` calls
@@ -102,7 +103,7 @@ the Out of scope section below.
 ## Out of scope (deferred)
 
 Bulk import via `POST /api/metadata` (with `importStrategy`, `atomicMode`, and
-`mergeMode` parameters), dependency export via `GET /api/metadata?<prefix>=…` (which
-pulls an object and all its dependencies), and metadata versioning/sync (the
+`mergeMode` parameters), dependency export (pulling an object and all its referenced dependencies via `/api/metadata`),
+and metadata versioning/sync (the
 `/api/metadata/version` subsystem) are not covered here. These topics would be added
 to this file or to dedicated sub-docs if they become relevant.
